@@ -1,9 +1,9 @@
-def call(Map config = [:], Closure body) {
-
+// def call(Map config = [:], Closure body) {
+def call(Map config = [:]) {
   def mavenImage  = config.mavenImage ?: "maven:3.9.6-eclipse-temurin-17"
   def kanikoImage = config.kanikoImage ?: "gcr.io/kaniko-project/executor:debug"
 
-  podTemplate(yaml: """
+  return """
 apiVersion: v1
 kind: Pod
 spec:
@@ -33,7 +33,7 @@ spec:
 
   - name: jnlp
     image: jenkins/inbound-agent:latest
-""") {
+""" {
 
     node(POD_LABEL) {
       body()
