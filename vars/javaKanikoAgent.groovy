@@ -53,5 +53,6 @@ spec:
           key: AWS_REGION
   - name: jnlp
     image: jenkins/inbound-agent:3355.v388858a_47b_33-7
+    args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
 """
 }
