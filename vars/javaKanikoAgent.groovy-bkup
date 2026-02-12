@@ -1,5 +1,5 @@
 // def call(Map config = [:], Closure body) {
-def call(Map config = [:], String extraContainers = "") {  
+def call(Map config = [:]) {
   def mavenImage  = config.mavenImage ?: "maven:3.9.6-eclipse-temurin-17"
   def kanikoImage = config.kanikoImage ?: "gcr.io/kaniko-project/executor:debug"
 
@@ -54,6 +54,5 @@ spec:
   - name: jnlp
     image: jenkins/inbound-agent:3355.v388858a_47b_33-7
     args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
-${extraContainers}
 """
 }
