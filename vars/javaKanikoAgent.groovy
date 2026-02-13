@@ -2,7 +2,7 @@
 def call(Map config = [:], String extraContainers = "") {  
   def mavenImage  = config.mavenImage ?: "maven:3.9.6-eclipse-temurin-17"
   def kanikoImage = config.kanikoImage ?: "gcr.io/kaniko-project/executor:debug"
-
+  def toolImage   = config.toolImage ?: "if-no-image-passed"
   return """
 apiVersion: v1
 kind: Pod
@@ -54,6 +54,28 @@ spec:
   - name: jnlp
     image: jenkins/inbound-agent:3355.v388858a_47b_33-7
     args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
-  ${extraContainers}
+  - name: tools
+    image: ${toolImage}
+    imagePullPolicy: Always
+    command:
+    - cat
+    tty: true    
+    env:    
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: aws-creds
+          key: AWS_ACCESS_KEY_ID
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: aws-creds
+          key: AWS_SECRET_ACCESS_KEY
+    - name: AWS_REGION
+      valueFrom:
+        secretKeyRef:
+          name: aws-creds
+          key: AWS_REGION 
+
 """
 }
