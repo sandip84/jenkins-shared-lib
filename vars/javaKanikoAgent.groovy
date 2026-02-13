@@ -17,7 +17,7 @@ spec:
 
     - name: maven-repo-cache
       emptyDir: {}
-
+  serviceAccountName: jenkins-deployer
   containers:
   - name: maven
     image: ${mavenImage}
