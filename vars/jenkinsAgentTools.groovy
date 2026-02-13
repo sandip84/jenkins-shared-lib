@@ -6,7 +6,7 @@ def call(Map config = [:]) {
     serviceAccountName: jenkins-deployer
     containers:
     - name: tools
-      image: ${tooImage}
+      image: ${toolImage}
       imagePullPolicy: Always
       command:
       - cat
