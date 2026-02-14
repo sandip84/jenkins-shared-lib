@@ -1,7 +1,7 @@
 // def call(Map config = [:], Closure body) {
 def call(Map config = [:], String extraContainers = "") {  
   def mavenImage  = config.mavenImage ?: "maven:3.9.6-eclipse-temurin-17"
-  def buildkitImage = config.buildkitImage ?: "moby/buildkit:rootless"
+  def buildkitImage = config.buildkitImage ?: "ghcr.io/tonistiigi/buildkit-rootless:v0.12.5"
   def toolImage   = config.toolImage ?: "if-no-image-passed"
   return """
 apiVersion: v1
@@ -32,7 +32,7 @@ spec:
         mountPath: /root/.m2/repository
 
   - name: buildkit
-    image: moby/buildkit:rootless
+    image: ${buildkitImage}
     tty: true
     securityContext:
       runAsUser: 1000
