@@ -1,7 +1,7 @@
 // def call(Map config = [:], Closure body) {
 def call(Map config = [:], String extraContainers = "") {  
   def mavenImage  = config.mavenImage ?: "maven:3.9.6-eclipse-temurin-17"
-  def buildkitImage = config.buildkitImage ?: "moby/buildkit:rootless"
+  def kanikoImage = config.kanikoImage ?: "gcr.io/kaniko-project/executor:debug"
   def toolImage   = config.toolImage ?: "if-no-image-passed"
   return """
 apiVersion: v1
@@ -31,31 +31,26 @@ spec:
       - name: maven-repo-cache
         mountPath: /root/.m2/repository
 
-  - name: buildkit
-    image: moby/buildkit:rootless
+  - name: kaniko
+    image: ${kanikoImage}
+    command: ["sh","-c","cat"]
     tty: true
-    securityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-    env:
-      - name: BUILDKITD_FLAGS
-        value: --oci-worker-no-process-sandbox
-      - name: AWS_ACCESS_KEY_ID
-        valueFrom:
-          secretKeyRef:
-            name: aws-creds
-            key: AWS_ACCESS_KEY_ID
-      - name: AWS_SECRET_ACCESS_KEY
-        valueFrom:
-          secretKeyRef:
-            name: aws-creds
-            key: AWS_SECRET_ACCESS_KEY
-      - name: AWS_REGION
-        valueFrom:
-          secretKeyRef:
-            name: aws-creds
-            key: AWS_REGION
-
+    env:    
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: aws-creds
+          key: AWS_ACCESS_KEY_ID
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: aws-creds
+          key: AWS_SECRET_ACCESS_KEY
+    - name: AWS_REGION
+      valueFrom:
+        secretKeyRef:
+          name: aws-creds
+          key: AWS_REGION
   - name: jnlp
     image: jenkins/inbound-agent:3355.v388858a_47b_33-7
     args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
