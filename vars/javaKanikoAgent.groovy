@@ -34,12 +34,7 @@ spec:
   - name: buildkit
     image: ${buildkitImage}
     tty: true
-    securityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
     env:
-      - name: BUILDKITD_FLAGS
-        value: --oci-worker-no-process-sandbox
       - name: AWS_ACCESS_KEY_ID
         valueFrom:
           secretKeyRef:
