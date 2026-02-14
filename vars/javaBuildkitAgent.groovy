@@ -36,6 +36,8 @@ spec:
     image: ${buildahImage}
     securityContext:
       privileged: true
+    command: ["cat"]
+    tty: true      
     env:
       - name: AWS_ACCESS_KEY_ID
         valueFrom:
