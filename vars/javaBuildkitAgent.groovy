@@ -17,6 +17,10 @@ spec:
 
     - name: maven-repo-cache
       emptyDir: {}
+    # Shared Docker auth between tools + buildkit
+    - name: docker-config
+      emptyDir: {}
+            
   serviceAccountName: jenkins-deployer
   containers:
   - name: maven
@@ -50,6 +54,9 @@ spec:
           secretKeyRef:
             name: aws-creds
             key: AWS_REGION
+    volumeMounts:
+      - name: docker-config
+        mountPath: /home/jenkins/.docker     
 
   - name: jnlp
     image: jenkins/inbound-agent:3355.v388858a_47b_33-7
@@ -76,6 +83,9 @@ spec:
         secretKeyRef:
           name: aws-creds
           key: AWS_REGION 
+    volumeMounts:
+      - name: docker-config
+        mountPath: /home/jenkins/.docker          
 
 """
 }
