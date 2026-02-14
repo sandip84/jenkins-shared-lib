@@ -1,7 +1,7 @@
 // def call(Map config = [:], Closure body) {
 def call(Map config = [:], String extraContainers = "") {  
   def mavenImage  = config.mavenImage ?: "maven:3.9.6-eclipse-temurin-17"
-  def buildkitImage = config.buildkitImage ?: "ghcr.io/tonistiigi/buildkit-rootless:v0.12.5"
+  def buildahImage = config.buildahImage ?: "quay.io/buildah/stable:v1.34"
   def toolImage   = config.toolImage ?: "if-no-image-passed"
   return """
 apiVersion: v1
@@ -17,10 +17,7 @@ spec:
 
     - name: maven-repo-cache
       emptyDir: {}
-    # Shared Docker auth between tools + buildkit
-    - name: docker-config
-      emptyDir: {}
-            
+
   serviceAccountName: jenkins-deployer
   containers:
   - name: maven
@@ -35,9 +32,10 @@ spec:
       - name: maven-repo-cache
         mountPath: /root/.m2/repository
 
-  - name: buildkit
-    image: ${buildkitImage}
-    tty: true
+  - name: buildah
+    image: ${buildahImage}
+    securityContext:
+      privileged: true
     env:
       - name: AWS_ACCESS_KEY_ID
         valueFrom:
@@ -53,10 +51,7 @@ spec:
         valueFrom:
           secretKeyRef:
             name: aws-creds
-            key: AWS_REGION
-    volumeMounts:
-      - name: docker-config
-        mountPath: /home/jenkins/.docker     
+            key: AWS_REGION   
 
   - name: jnlp
     image: jenkins/inbound-agent:3355.v388858a_47b_33-7
@@ -82,10 +77,7 @@ spec:
       valueFrom:
         secretKeyRef:
           name: aws-creds
-          key: AWS_REGION 
-    volumeMounts:
-      - name: docker-config
-        mountPath: /home/jenkins/.docker          
+          key: AWS_REGION         
 
 """
 }
