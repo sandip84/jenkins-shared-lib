@@ -7,6 +7,10 @@ def call(Map config = [:], String extraContainers = "") {
 apiVersion: v1
 kind: Pod
 spec:
+  # force EC2 nodes
+  nodeSelector:
+    eks.amazonaws.com/compute-type: ec2
+
   volumes:
     - name: maven-settings
       configMap:
