@@ -9,7 +9,7 @@ kind: Pod
 spec:
   # force EC2 nodes
   nodeSelector:
-    eks.amazonaws.com/compute-type: ec2
+    role: jenkins
 
   volumes:
     - name: maven-settings
