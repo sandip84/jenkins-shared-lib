@@ -9,7 +9,7 @@ kind: Pod
 spec:
   # force EC2 nodes
   nodeSelector:
-    role: jenkins
+    role: jenkins-agent   #If you want pods to get scheduled in Karpenter nodes only.
 
   volumes:
     - name: maven-settings
